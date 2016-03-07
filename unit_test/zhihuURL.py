@@ -1,6 +1,6 @@
 __author__ = 'natas'
 
-PEOPLE_URL = ['https://www.zhihu.com/people/']
+PEOPLE_URL = ['https://www.Zhihu.com/people/']
 
 
 def followees(uername):
