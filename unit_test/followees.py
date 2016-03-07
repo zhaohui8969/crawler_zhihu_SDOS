@@ -2,6 +2,7 @@
 import requests
 import zhihuURL
 import json
+import time
 from bs4 import BeautifulSoup
 
 __author__ = 'natas'
@@ -91,10 +92,13 @@ class Zhihu:
 
 def main():
     zhobj = Zhihu()
-    # testuser = u'littleviper'
-    testuser = u'zhao-hui-36-5'
-    followers = zhobj.getfollowers(testuser)
+    testuser1 = u'littleviper'
+    testuser2 = u'zhao-hui-36-5'
+    username = testuser1
+    followers = zhobj.getfollowers(username)
     print("followers count: %d" % (len(followers)))
+    with open(time.strftime('%Y%m%d-%H%M%S') + '+' + username + '.txt', 'w')as f:
+        f.write(json.dumps(followers))
 
 
 if __name__ == '__main__':

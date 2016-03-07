@@ -3,3 +3,4 @@ unit_test/zhihu.cookie
 .idea
 unit_test/tmp.txt
 unit_test/*.pyc
+unit_test/*.txt
