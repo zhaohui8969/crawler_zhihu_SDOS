@@ -24,7 +24,7 @@ def crawfun(user_url, maxdeep, q, zhihuobj):
     # 初始化队列和bf
     q.put(0)
     q.put(user_url)
-    bf.add(user_url)
+    # bf.add(user_url)
     deepnow = 0
     father = user_url  # 辅助记录当前节点的父节点
     # 游览队列
@@ -51,15 +51,13 @@ def crawfun(user_url, maxdeep, q, zhihuobj):
                 if deepnow < maxdeep:
                     # 未达到最大深度，继续添加队列
                     # 获取follower列表
-                    followerslist = zhihuobj.getfollowers(user_url)
-                    if not followerslist == []:
-                        # 将未游览过的节点加入队列
-                        q.put({'F': user_url})
-                        for nextPoint in followerslist:
-                            if nextPoint not in bf:
+                    if user_url not in bf:
+                        bf.add(user_url)
+                        followerslist = zhihuobj.getfollowers(user_url)
+                        if not followerslist == []:
+                            q.put({'F': user_url})
+                            for nextPoint in followerslist:
                                 q.put(nextPoint)
-                                bf.add(nextPoint)
-                                # print('添加:%d' % nextPoint)
 
         except:
             raise

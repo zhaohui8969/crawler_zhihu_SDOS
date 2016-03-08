@@ -22,7 +22,9 @@ DATA_old = {1: {2, 3},
 DATA = {1: {2, 3},
         2: {4, 5},
         3: {6, 7},
-        6: {8, 9}}
+        6: {8, 9},
+        8: {1},
+        9: {2}}
 
 # bf对象，在避免环路的时候用到
 bf = BloomFilter(10000000, 0.01, 'filter.bloom')
@@ -34,7 +36,7 @@ def traver(point, maxdeep, q):
     # 初始化队列和bf
     q.put({'DC': 0})
     q.put(point)
-    bf.add(point)
+    # bf.add(point)
     deepnow = 0
     father = point  # 辅助记录当前节点的父节点
     # 游览队列
@@ -62,13 +64,12 @@ def traver(point, maxdeep, q):
                 if deepnow < maxdeep:
                     # 不是空节点
                     if point in DATA and DATA[point] is not None:
-                        # 将未游览过的节点加入队列
-                        q.put({'F': point})
-                        for nextPoint in DATA[point]:
-                            if nextPoint not in bf:
+                        # 将未游览过的节点的子节点加入队列
+                        if point not in bf:
+                            bf.add(point)
+                            q.put({'F': point})
+                            for nextPoint in DATA[point]:
                                 q.put(nextPoint)
-                                bf.add(nextPoint)
-                                # print('添加:%d' % nextPoint)
 
         except:
             traceback.print_exc()
@@ -77,7 +78,7 @@ def traver(point, maxdeep, q):
 
 def main():
     pass
-    for i in traver(1, 3, queue):
+    for i in traver(1, 10, queue):
         print(i)
         # print(queue.qsize())
 
