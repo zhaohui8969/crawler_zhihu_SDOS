@@ -21,7 +21,8 @@ DATA_old = {1: {2, 3},
 
 DATA = {1: {2, 3},
         2: {4, 5},
-        3: {6, 7}}
+        3: {6, 7},
+        6: {8, 9}}
 
 # bf对象，在避免环路的时候用到
 bf = BloomFilter(10000000, 0.01, 'filter.bloom')
@@ -35,30 +36,34 @@ def traver(point, maxdeep, q):
     q.put(point)
     bf.add(point)
     deepnow = 0
+    father = point  # 辅助记录当前节点的父节点
     # 游览队列
     while True:
-        time.sleep(0.1)
+        # time.sleep(0.1)
         try:
             item = q.get(block=False)
             # 控制深度
             if not isinstance(item, int):  # 判断是不是深度控制标记
-                deepnow = item['DC']
-                if deepnow > maxdeep:
-                    break
-                print('deep:%d' % deepnow)
-                q.put({'DC': deepnow + 1})
+                if 'F' in item:
+                    father = item['F']
+                else:
+                    deepnow = item['DC']
+                    if deepnow > maxdeep:
+                        break
+                    print('deep:%d' % deepnow)
+                    q.put({'DC': deepnow + 1})
             else:
                 # 处理节点
                 point = item
                 # print('node:%d' % point)
                 # 用yield做迭代
-                yield point
-                # 达到最大深度，不再增加队列
+                yield {father: point}
+                # 未达到设定的深度，继续遍历
                 if deepnow < maxdeep:
-                    # 未达到最大深度，继续添加队列
                     # 不是空节点
                     if point in DATA and DATA[point] is not None:
                         # 将未游览过的节点加入队列
+                        q.put({'F': point})
                         for nextPoint in DATA[point]:
                             if nextPoint not in bf:
                                 q.put(nextPoint)
@@ -74,7 +79,7 @@ def main():
     pass
     for i in traver(1, 3, queue):
         print(i)
-    # print(queue.qsize())
+        # print(queue.qsize())
 
 
 if __name__ == '__main__':
