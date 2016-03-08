@@ -5,3 +5,5 @@ unit_test/tmp.txt
 unit_test/*.pyc
 unit_test/*.txt
 unit_test/filter.bloom
+
+unit_test/db

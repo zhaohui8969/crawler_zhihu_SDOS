@@ -55,7 +55,7 @@ class Zhihu:
         :return:list followers
         """
         url = zhihuURL.folloers(username)
-        followers = {}
+        followers = []
         print('url:' + url)
         # 用requests重写(为了session的复用)
         r = self._session.get(url)
@@ -85,8 +85,8 @@ class Zhihu:
                 soup = BeautifulSoup(html, 'lxml')
                 h2 = soup.find('h2')
                 author_name = h2.a.text
-                author_url = h2.a['href']
-                followers[author_name] = {'author_url': author_url}
+                author_url = h2.a['href'].split('/')[-1]
+                followers.append({'n': author_name, 'u': author_url})
         return followers
 
 
@@ -94,11 +94,16 @@ def main():
     zhobj = Zhihu()
     testuser1 = u'littleviper'
     testuser2 = u'zhao-hui-36-5'
-    username = testuser1
+    testuser3 = u'li-shou-peng-31'
+    username = testuser3
     followers = zhobj.getfollowers(username)
     print("followers count: %d" % (len(followers)))
-    with open(time.strftime('%Y%m%d-%H%M%S') + '+' + username + '.txt', 'w')as f:
-        f.write(json.dumps(followers))
+    print(json.dumps(followers))
+    # with open(time.strftime('%Y%m%d-%H%M%S') + '+' + username + '.txt', 'w')as f:
+    #     f.write(json.dumps(followers))
+    with open(username + '.followers.txt', 'w')as f:
+        for line in followers:
+            f.write(json.dumps(line)+'\n')
 
 
 if __name__ == '__main__':
