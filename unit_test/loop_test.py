@@ -9,15 +9,19 @@ import time
 
 __author__ = 'natas'
 
+DATA_old = {1: {2, 3},
+            2: {3, 4},
+            3: None,
+            4: {1, 5},
+            5: {6, 7},
+            6: {7, 1, 8},
+            7: {1, 2, 3},
+            8: {1, 9},
+            9: None}
+
 DATA = {1: {2, 3},
-        2: {3, 4},
-        3: None,
-        4: {1, 5},
-        5: {6, 7},
-        6: {7, 1, 8},
-        7: {1, 2, 3},
-        8: {1, 9},
-        9: None}
+        2: {4, 5},
+        3: {6, 7}}
 
 # bf对象，在避免环路的时候用到
 bf = BloomFilter(10000000, 0.01, 'filter.bloom')
@@ -33,12 +37,14 @@ def traver(point, maxdeep, q):
     deepnow = 0
     # 游览队列
     while True:
-        # time.sleep(1)
+        time.sleep(0.1)
         try:
             item = q.get(block=False)
             # 控制深度
             if not isinstance(item, int):  # 判断是不是深度控制标记
                 deepnow = item['DC']
+                if deepnow > maxdeep:
+                    break
                 print('deep:%d' % deepnow)
                 q.put({'DC': deepnow + 1})
             else:
@@ -48,12 +54,10 @@ def traver(point, maxdeep, q):
                 # 用yield做迭代
                 yield point
                 # 达到最大深度，不再增加队列
-                if deepnow == maxdeep:
-                    break
-                else:
+                if deepnow < maxdeep:
                     # 未达到最大深度，继续添加队列
                     # 不是空节点
-                    if DATA[point] is not None:
+                    if point in DATA and DATA[point] is not None:
                         # 将未游览过的节点加入队列
                         for nextPoint in DATA[point]:
                             if nextPoint not in bf:
@@ -63,12 +67,14 @@ def traver(point, maxdeep, q):
 
         except:
             traceback.print_exc()
+            break
 
 
 def main():
     pass
-    for i in traver(1, 2, queue):
-        print i
+    for i in traver(1, 3, queue):
+        print(i)
+    # print(queue.qsize())
 
 
 if __name__ == '__main__':
