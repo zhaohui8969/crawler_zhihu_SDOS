@@ -98,7 +98,7 @@ def main():
     username = testuser3
     followers = zhobj.getfollowers(username)
     print("followers count: %d" % (len(followers)))
-    print(json.dumps(followers))
+    # print(json.dumps(followers))
     # with open(time.strftime('%Y%m%d-%H%M%S') + '+' + username + '.txt', 'w')as f:
     #     f.write(json.dumps(followers))
     with open(username + '.followers.txt', 'w')as f:
