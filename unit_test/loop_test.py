@@ -44,7 +44,9 @@ def traver(point, maxdeep, q):
             else:
                 # 处理节点
                 point = item
-                print('node:%d' % point)
+                # print('node:%d' % point)
+                # 用yield做迭代
+                yield point
                 # 达到最大深度，不再增加队列
                 if deepnow == maxdeep:
                     break
@@ -57,7 +59,7 @@ def traver(point, maxdeep, q):
                             if nextPoint not in bf:
                                 q.put(nextPoint)
                                 bf.add(nextPoint)
-                                print('添加:%d' % nextPoint)
+                                # print('添加:%d' % nextPoint)
 
         except:
             traceback.print_exc()
@@ -65,7 +67,8 @@ def traver(point, maxdeep, q):
 
 def main():
     pass
-    traver(1, 2, queue)
+    for i in traver(1, 2, queue):
+        print i
 
 
 if __name__ == '__main__':
