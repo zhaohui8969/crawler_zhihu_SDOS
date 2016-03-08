@@ -48,24 +48,19 @@ class Zhihu:
             ga = soup.find('script', attrs={'data-name': 'ga_vars'})
             return json.loads(ga.text)['user_hash']
 
-    def getfollowers(self, username):
+    def getfollowees(self, username):
         """
         获取用户的followers
         :rtype : list
         :param username:string 用户名(URL)
         :return:list followers
         """
-        url = zhihuURL.folloers(username)
-        followers = []
+        url = zhihuURL.followees(username)
+        followees = []
         # print('url:' + url)
         # 用requests重写(为了session的复用)
         r = self._session.get(url)
-        html = r.content
-        # 临时保存一份html
-        with open(TEMP_FILE, 'w') as f:
-            f.write(html)
-        # print(html)
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(r.content, 'lxml')
         # 过滤出内容，分析页面的Ajax过程重写了这个部分
         hashid = self.hash_id(soup)
         xsrfstr = self.xsrf(soup)
@@ -78,7 +73,7 @@ class Zhihu:
         while gotten_date_num == 20:
             params['offset'] = offset
             data['params'] = json.dumps(params)
-            res = self._session.post(zhihuURL.API_More_Followers_URL, data=data, headers=headers)
+            res = self._session.post(zhihuURL.API_More_Followees_URL, data=data, headers=headers)
             json_data = res.json()
             gotten_date_num = len(json_data['msg'])
             offset += gotten_date_num
@@ -88,8 +83,8 @@ class Zhihu:
                 # author_name = h2.a.text
                 author_url = h2.a['href'].split('/')[-1]
                 # followers.append({'n': author_name, 'u': author_url})
-                followers.append(author_url)
-        return followers
+                followees.append(author_url)
+        return followees
 
 
 def main():
@@ -97,15 +92,15 @@ def main():
     testuser1 = u'littleviper'
     testuser2 = u'zhao-hui-36-5'
     testuser3 = u'li-shou-peng-31'
-    username = testuser3
-    followers = zhobj.getfollowers(username)
-    print("followers count: %d" % (len(followers)))
-    # print(json.dumps(followers))
+    username = testuser2
+    followees = zhobj.getfollowees(username)
+    print("followees count: %d" % (len(followees)))
+    print(json.dumps(followees))
     # with open(time.strftime('%Y%m%d-%H%M%S') + '+' + username + '.txt', 'w')as f:
     #     f.write(json.dumps(followers))
-    with open(username + '.followers.txt', 'w')as f:
-        for line in followers:
-            f.write(json.dumps(line) + '\n')
+    # with open(username + '.followees.txt', 'w')as f:
+    #     for line in followers:
+    #         f.write(json.dumps(line) + '\n')
 
 
 if __name__ == '__main__':

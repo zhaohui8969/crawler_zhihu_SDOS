@@ -14,6 +14,7 @@ def folloers(username):
 
 
 API_More_Followers_URL = zhihuURL + '/node/ProfileFollowersListV2'
+API_More_Followees_URL = zhihuURL + '/node/ProfileFolloweesListV2'
 
 DEAFULT_HEADER = {'X-Requested-With': 'XMLHttpRequest',
                   'Referer': 'http://www.zhihu.com',
