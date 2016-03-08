@@ -51,12 +51,13 @@ class Zhihu:
     def getfollowers(self, username):
         """
         获取用户的followers
+        :rtype : list
         :param username:string 用户名(URL)
         :return:list followers
         """
         url = zhihuURL.folloers(username)
         followers = []
-        print('url:' + url)
+        # print('url:' + url)
         # 用requests重写(为了session的复用)
         r = self._session.get(url)
         html = r.content
@@ -84,9 +85,10 @@ class Zhihu:
             for html in json_data['msg']:
                 soup = BeautifulSoup(html, 'lxml')
                 h2 = soup.find('h2')
-                author_name = h2.a.text
+                # author_name = h2.a.text
                 author_url = h2.a['href'].split('/')[-1]
-                followers.append({'n': author_name, 'u': author_url})
+                # followers.append({'n': author_name, 'u': author_url})
+                followers.append(author_url)
         return followers
 
 
@@ -103,7 +105,7 @@ def main():
     #     f.write(json.dumps(followers))
     with open(username + '.followers.txt', 'w')as f:
         for line in followers:
-            f.write(json.dumps(line)+'\n')
+            f.write(json.dumps(line) + '\n')
 
 
 if __name__ == '__main__':

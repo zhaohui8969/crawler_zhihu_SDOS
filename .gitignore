@@ -7,3 +7,4 @@ unit_test/*.txt
 unit_test/filter.bloom
 
 unit_test/db
+unit_test/*.json
