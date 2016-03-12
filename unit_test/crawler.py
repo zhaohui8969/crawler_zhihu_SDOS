@@ -49,7 +49,7 @@ def crawfun(user_url, maxdeep, q, zhihuobj):
                 yield relaDic  # 返回用户以及他的一位followee
                 # 达到最大深度，不再增加队列
                 if deepnow < maxdeep:
-                    print('continu...')
+                    # print('continu...')
                     # 未达到最大深度，继续添加队列
                     # 获取follower列表
                     if user_url not in bf:
@@ -61,7 +61,7 @@ def crawfun(user_url, maxdeep, q, zhihuobj):
                                 q.put(i)
 
         except:
-            raise
+            pass
 
 
 def main():
@@ -86,7 +86,7 @@ def main():
         exit()
     elif arglen == 3:
         username = sys.argv[1]
-        depth = sys.argv[2]
+        depth = int(sys.argv[2])
 
     # 启动爬虫
     resJson = crawfun(username, depth, queue, zhihuObj)
@@ -120,6 +120,8 @@ def main():
         print(e)
         print('Save to %s' % filename)
         print('Quit.')
+    except:
+        pass
 
 
 if __name__ == '__main__':

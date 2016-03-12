@@ -59,31 +59,34 @@ class Zhihu:
         followees = []
         # print('url:' + url)
         # 用requests重写(为了session的复用)
-        r = self._session.get(url)
-        soup = BeautifulSoup(r.content, 'lxml')
-        # 过滤出内容，分析页面的Ajax过程重写了这个部分
-        hashid = self.hash_id(soup)
-        xsrfstr = self.xsrf(soup)
-        headers = dict(zhihuURL.DEAFULT_HEADER)
-        headers['Referer'] = url
-        params = {"order_by": "created", "offset": 0, "hash_id": hashid}
-        data = {'_xsrf': xsrfstr, 'method': 'next', 'params': ''}
-        gotten_date_num = 20
-        offset = 0
-        while gotten_date_num == 20:
-            params['offset'] = offset
-            data['params'] = json.dumps(params)
-            res = self._session.post(zhihuURL.API_More_Followees_URL, data=data, headers=headers)
-            json_data = res.json()
-            gotten_date_num = len(json_data['msg'])
-            offset += gotten_date_num
-            for html in json_data['msg']:
-                soup = BeautifulSoup(html, 'lxml')
-                h2 = soup.find('h2')
-                # author_name = h2.a.text
-                author_url = h2.a['href'].split('/')[-1]
-                # followers.append({'n': author_name, 'u': author_url})
-                followees.append(author_url)
+        try:
+            r = self._session.get(url)
+            soup = BeautifulSoup(r.content, 'lxml')
+            # 过滤出内容，分析页面的Ajax过程重写了这个部分
+            hashid = self.hash_id(soup)
+            xsrfstr = self.xsrf(soup)
+            headers = dict(zhihuURL.DEAFULT_HEADER)
+            headers['Referer'] = url
+            params = {"order_by": "created", "offset": 0, "hash_id": hashid}
+            data = {'_xsrf': xsrfstr, 'method': 'next', 'params': ''}
+            gotten_date_num = 20
+            offset = 0
+            while gotten_date_num == 20:
+                params['offset'] = offset
+                data['params'] = json.dumps(params)
+                res = self._session.post(zhihuURL.API_More_Followees_URL, data=data, headers=headers)
+                json_data = res.json()
+                gotten_date_num = len(json_data['msg'])
+                offset += gotten_date_num
+                for html in json_data['msg']:
+                    soup = BeautifulSoup(html, 'lxml')
+                    h2 = soup.find('h2')
+                    # author_name = h2.a.text
+                    author_url = h2.a['href'].split('/')[-1]
+                    # followers.append({'n': author_name, 'u': author_url})
+                    followees.append(author_url)
+        except:
+            pass
         return followees
 
 
