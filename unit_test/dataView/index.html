@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <style type="text/css">
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            background-color: black;
+        }
+
+        .main {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div class="main" id="main">123</div>
+
+<!-- ECharts单文件引入 -->
+<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+<script src="jquery-2.2.3.min.js"></script>
+
+<script type="text/javascript">
+    // 路径配置
+    require.config({
+        paths: {
+            echarts: 'http://echarts.baidu.com/build/dist'
+        }
+    });
+
+    // 使用
+    require(
+            [
+                'echarts',
+                'echarts/chart/force' // 使用柱状图就加载bar模块，按需加载
+            ],
+            function (ec) {
+                // 基于准备好的dom，初始化echarts图表
+                var myChart = ec.init(document.getElementById('main'));
+
+                var option = {
+                    title: {
+                        show: false,
+                        text: 'webkit内核依赖',
+                        subtext: '数据来自网络',
+                        backgroundColor: 'rgba(255,255,255,0.5)',
+                        x: 'right',
+                        y: 'bottom'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{b}"
+                    },
+                    toolbox: {
+                        show: false,
+                        feature: {
+                            restore: {show: true},
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    // legend : {
+                    //  data : ['HTMLElement', 'WebGL', 'SVG', 'CSS', 'Other'],
+                    //  orient : 'vertical',
+                    //  x : 'left'
+                    // },
+                    noDataEffect: 'none',
+                    series: [{
+                        type: 'force',
+                    }],
+                };
+
+                $.ajax({
+                    // url: 'out.json',
+                    url: 'zhao-hui-36-5+20+20160309-003501.ec.json',
+                    // url: 'zhao-hui-36-5+20+20160309-003501.edge.json',
+                    // url: '10line.ec.json',
+                    // url: '200line.ec.json',
+                    // url: 'test.ec.json',
+                    dataType: 'json',
+                    success: function (data) {
+                        option.title.text = data.title;
+                        option.series[0] = {
+                            type: 'force',
+                            name: 'webkit-dep',
+                            itemStyle: {
+                                normal: {
+                                    linkStyle: {
+                                        opacity: 0.5
+                                    }
+                                }
+                            },
+                            categories: data.categories,
+                            nodes: data.nodes,
+                            links: data.links,
+                            // minRadius: 0.5,
+                            // maxRadius: 7.5,
+                            gravity: 0.1,
+                            scaling: 100.1,
+                            minRadius: 5,
+                            maxRadius: 50,
+                            // gravity: 10,
+                            //       scaling: 100.1,
+                            steps: 100,
+                            large: true,
+                            useWorker: true,
+                            roam: true,
+                            draggable: true,
+                            coolDown: 0.995,
+                            ribbonType: false
+                        };
+                        // 为echarts对象加载数据
+                        myChart.setOption(option);
+                        // myChart.hideLoading();
+                    }
+                });
+            }
+    );
+</script>
+</body>
